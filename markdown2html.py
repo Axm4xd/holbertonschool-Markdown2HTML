@@ -1,38 +1,35 @@
 #!/usr/bin/python3
-"""Markdown to HTML converter: headings and unordered lists"""
-
 import sys
 import os
 
 
 def convert_markdown_to_html(input_file, output_file):
-    """Converts a Markdown file to an HTML file"""
     with open(input_file, 'r') as md_file:
         lines = md_file.readlines()
 
     with open(output_file, 'w') as html_file:
-        in_list = False
+        in_ul = False
 
         for line in lines:
             line = line.strip()
 
             if not line:
-                if in_list:
+                if in_ul:
                     html_file.write("</ul>\n")
-                    in_list = False
+                    in_ul = False
                 continue
 
-            if line.startswith('- '):
-                if not in_list:
+            if line.startswith('* ') or line.startswith('- '):
+                if not in_ul:
                     html_file.write("<ul>\n")
-                    in_list = True
+                    in_ul = True
                 item = line[2:].strip()
                 html_file.write(f"<li>{item}</li>\n")
                 continue
 
-            if in_list:
+            if in_ul:
                 html_file.write("</ul>\n")
-                in_list = False
+                in_ul = False
 
             if line.startswith('#'):
                 level = 0
@@ -42,7 +39,7 @@ def convert_markdown_to_html(input_file, output_file):
                     content = line[level + 1:].strip()
                     html_file.write(f"<h{level}>{content}</h{level}>\n")
 
-        if in_list:
+        if in_ul:
             html_file.write("</ul>\n")
 
 
