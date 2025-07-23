@@ -9,6 +9,7 @@ def convert_markdown_to_html(input_file, output_file):
 
     with open(output_file, 'w') as html_file:
         in_ul = False
+        in_ol = False
 
         for line in lines:
             line = line.strip()
@@ -17,10 +18,27 @@ def convert_markdown_to_html(input_file, output_file):
                 if in_ul:
                     html_file.write("</ul>\n")
                     in_ul = False
+                if in_ol:
+                    html_file.write("</ol>\n")
+                    in_ol = False
                 continue
 
-            if line.startswith('* ') or line.startswith('- '):
+            if line.startswith('* '):
+                if not in_ol:
+                    if in_ul:
+                        html_file.write("</ul>\n")
+                        in_ul = False
+                    html_file.write("<ol>\n")
+                    in_ol = True
+                item = line[2:].strip()
+                html_file.write(f"<li>{item}</li>\n")
+                continue
+
+            if line.startswith('- '):
                 if not in_ul:
+                    if in_ol:
+                        html_file.write("</ol>\n")
+                        in_ol = False
                     html_file.write("<ul>\n")
                     in_ul = True
                 item = line[2:].strip()
@@ -30,6 +48,9 @@ def convert_markdown_to_html(input_file, output_file):
             if in_ul:
                 html_file.write("</ul>\n")
                 in_ul = False
+            if in_ol:
+                html_file.write("</ol>\n")
+                in_ol = False
 
             if line.startswith('#'):
                 level = 0
@@ -41,6 +62,8 @@ def convert_markdown_to_html(input_file, output_file):
 
         if in_ul:
             html_file.write("</ul>\n")
+        if in_ol:
+            html_file.write("</ol>\n")
 
 
 if __name__ == "__main__":
