@@ -1,4 +1,14 @@
 #!/usr/bin/python3
+"""
+markdown2html.py - Convert Markdown to HTML
+
+This script reads a Markdown file and outputs its HTML representation.
+Supports headings and unordered lists.
+
+Usage:
+    ./markdown2html.py input.md output.html
+"""
+
 import sys
 import os
 
@@ -8,38 +18,38 @@ def convert_markdown_to_html(input_file, output_file):
         lines = md_file.readlines()
 
     with open(output_file, 'w') as html_file:
-        in_ul = False
-
+        in_list = False
         for line in lines:
-            line = line.strip()
+            line = line.rstrip()
 
             if not line:
-                if in_ul:
+                if in_list:
                     html_file.write("</ul>\n")
-                    in_ul = False
+                    in_list = False
                 continue
 
-            if line.startswith('* ') or line.startswith('- '):
-                if not in_ul:
+            # Unordered list item
+            if line.startswith("* ") or line.startswith("- "):
+                if not in_list:
                     html_file.write("<ul>\n")
-                    in_ul = True
-                item = line[2:].strip()
-                html_file.write(f"<li>{item}</li>\n")
+                    in_list = True
+                html_file.write(f"<li>{line[2:].strip()}</li>\n")
                 continue
 
-            if in_ul:
+            if in_list:
                 html_file.write("</ul>\n")
-                in_ul = False
+                in_list = False
 
-            if line.startswith('#'):
-                level = 0
-                while level < len(line) and line[level] == '#':
-                    level += 1
-                if 1 <= level <= 6 and line[level] == ' ':
-                    content = line[level + 1:].strip()
-                    html_file.write(f"<h{level}>{content}</h{level}>\n")
+            # Headers
+            if line.startswith("#"):
+                count = 0
+                while count < len(line) and line[count] == "#":
+                    count += 1
+                if 1 <= count <= 6 and line[count] == ' ':
+                    content = line[count + 1:].strip()
+                    html_file.write(f"<h{count}>{content}</h{count}>\n")
 
-        if in_ul:
+        if in_list:
             html_file.write("</ul>\n")
 
 
