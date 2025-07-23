@@ -1,54 +1,61 @@
 #!/usr/bin/python3
 """
-markdown2html.py - Converts Markdown to HTML
+markdown2html.py - Convert Markdown to HTML
+
+This script reads a Markdown file and outputs its HTML representation.
+Supports headings and unordered lists.
+
+Usage:
+    ./markdown2html.py input.md output.html
 """
 
 import sys
 import os
 
 
-def convert_md_to_html(input_path, output_path):
-    in_ul = False
-    with open(input_path, 'r') as input_file, open(output_path, 'w') as output_file:
-        for line in input_file:
+def convert_markdown_to_html(input_file, output_file):
+    with open(input_file, 'r') as md_file:
+        lines = md_file.readlines()
+
+    with open(output_file, 'w') as html_file:
+        in_list = False
+        for line in lines:
             line = line.rstrip()
 
             if not line:
-                if in_ul:
-                    output_file.write("</ul>\n")
-                    in_ul = False
+                if in_list:
+                    html_file.write("</ul>\n")
+                    in_list = False
                 continue
+
+            # Unordered list item
+            if line.startswith("* ") or line.startswith("- "):
+                if not in_list:
+                    html_file.write("<ul>\n")
+                    in_list = True
+                html_file.write(f"<li>{line[2:].strip()}</li>\n")
+                continue
+
+            if in_list:
+                html_file.write("</ul>\n")
+                in_list = False
 
             # Headers
             if line.startswith("#"):
                 count = 0
                 while count < len(line) and line[count] == "#":
                     count += 1
-                if count <= 6 and line[count] == ' ':
-                    content = line[count+1:].strip()
-                    output_file.write(f"<h{count}>{content}</h{count}>\n")
-                    continue
+                if 1 <= count <= 6 and line[count] == ' ':
+                    content = line[count + 1:].strip()
+                    html_file.write(f"<h{count}>{content}</h{count}>\n")
 
-            # List items
-            if line.startswith("* "):
-                if not in_ul:
-                    output_file.write("<ul>\n")
-                    in_ul = True
-                content = line[2:].strip()
-                output_file.write(f"<li>{content}</li>\n")
-                continue
-            else:
-                if in_ul:
-                    output_file.write("</ul>\n")
-                    in_ul = False
-
-        if in_ul:
-            output_file.write("</ul>\n")
+        if in_list:
+            html_file.write("</ul>\n")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.stderr.write("Usage: ./markdown2html.py <input_file> <output_file>\n")
+    if len(sys.argv) < 3:
+        sys.stderr.write("Usage: ./markdown2html.py README.md README.html\n")
         sys.exit(1)
 
     input_file = sys.argv[1]
@@ -59,7 +66,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        convert_md_to_html(input_file, output_file)
+        convert_markdown_to_html(input_file, output_file)
+        sys.exit(0)
     except Exception as e:
         sys.stderr.write(f"Error: {e}\n")
         sys.exit(1)
