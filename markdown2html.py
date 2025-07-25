@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """
 Markdown to HTML converter
 Converts basic Markdown elements to HTML format
@@ -162,7 +162,6 @@ def main():
     if not os.path.isfile(input_file):
         print(f"Missing {input_file}", file=sys.stderr)
         sys.exit(1)
-    
     try:
         converter = MarkdownConverter()
         converter.convert_file(input_file, output_file)
