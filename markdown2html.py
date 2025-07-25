@@ -58,7 +58,7 @@ if __name__ == "__main__":
                 content = line[count + 1:].strip()
                 return f"<h{count}>{content}</h{count}>\n"
             return None
-        
+
         def process_unordered_list(self, line: str, html_file: TextIO) -> bool:
             """Process unordered list items (- item)"""
             if not line.startswith("- "):
@@ -70,7 +70,7 @@ if __name__ == "__main__":
             content = line[2:].strip()
             html_file.write(f"    <li>{content}</li>\n")
             return True
-        
+
         def process_ordered_list(self, line: str, html_file: TextIO) -> bool:
             """Process ordered list items (* item)"""
             if not line.startswith("* "):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
             content = line[2:].strip()
             html_file.write(f"<li>{content}</li>\n")
             return True
-        
+
         def process_line(self, line: str, html_file: TextIO):
             """Process a single line of markdown"""
             line = line.rstrip()
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 raise PermissionError(f"Permission denied accessing files")
             except Exception as e:
                 raise Exception(f"Error during conversion: {str(e)}")
-            
+
 def main():
     """Main function"""
     if len(sys.argv) < 3:
@@ -142,4 +142,3 @@ def main():
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-        
