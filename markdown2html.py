@@ -15,12 +15,14 @@ if __name__ == "__main__":
             self.in_ol = False
             self.in_paragraph = False
             self.paragraph_lines = []
+
         def reset_state(self):
             """Reset converter state"""
             self.in_ul = False
             self.in_ol = False
             self.in_paragraph = False
             self.paragraph_lines = []
+
         def close_lists(self, html_file: TextIO):
             """Close any open list tags"""
             if self.in_ul:
@@ -29,6 +31,7 @@ if __name__ == "__main__":
             if self.in_ol:
                 html_file.write("</ol>\n")
                 self.in_ol = False
+
         def close_paragraph(self, html_file: TextIO):
             """Close current paragraph if open"""
             if self.in_paragraph and self.paragraph_lines:
@@ -43,6 +46,7 @@ if __name__ == "__main__":
                 html_file.write("</p>\n")
                 self.in_paragraph = False
                 self.paragraph_lines = []
+
         def process_heading(self, line: str) -> str:
             """Process heading lines (# ## ### etc.)"""
             if not line.startswith('#'):
@@ -54,6 +58,7 @@ if __name__ == "__main__":
                 content = line[count + 1:].strip()
                 return f"<h{count}>{content}</h{count}>\n"
             return None
+        
         def process_unordered_list(self, line: str, html_file: TextIO) -> bool:
             """Process unordered list items (- item)"""
             if not line.startswith("- "):
@@ -65,6 +70,7 @@ if __name__ == "__main__":
             content = line[2:].strip()
             html_file.write(f"    <li>{content}</li>\n")
             return True
+        
         def process_ordered_list(self, line: str, html_file: TextIO) -> bool:
             """Process ordered list items (* item)"""
             if not line.startswith("* "):
@@ -74,8 +80,9 @@ if __name__ == "__main__":
                 html_file.write("<ol>\n")
                 self.in_ol = True
             content = line[2:].strip()
-            html_file.write(f"    <li>{content}</li>\n")
+            html_file.write(f"<li>{content}</li>\n")
             return True
+        
         def process_line(self, line: str, html_file: TextIO):
             """Process a single line of markdown"""
             line = line.rstrip()
@@ -99,6 +106,7 @@ if __name__ == "__main__":
             if not self.in_paragraph:
                 self.in_paragraph = True
             self.paragraph_lines.append(line)
+
         def convert_file(self, input_path: str, output_path: str):
             """Convert markdown file to HTML"""
             try:
@@ -116,6 +124,7 @@ if __name__ == "__main__":
                 raise PermissionError(f"Permission denied accessing files")
             except Exception as e:
                 raise Exception(f"Error during conversion: {str(e)}")
+            
 def main():
     """Main function"""
     if len(sys.argv) < 3:
