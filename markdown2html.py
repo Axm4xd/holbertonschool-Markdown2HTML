@@ -129,7 +129,8 @@ if __name__ == "__main__":
 def main():
     """Main function"""
     if len(sys.argv) < 3:
-        print("Usage: ./markdown2html.py <input.md> <output.html>", file=sys.stderr)
+        print("Usage: ./markdown2html.py <input.md> <output.html>",
+            file=sys.stderr)
         sys.exit(1)
     input_file = sys.argv[1]
     output_file = sys.argv[2]
@@ -138,7 +139,7 @@ def main():
         sys.exit(1)
     try:
         converter = MarkdownConverter()
-        converter.convert_file(input_file, output_file)
+        converter.convert_file(input_file,output_file)
         print(f"Successfully converted {input_file} to {output_file}")        
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
